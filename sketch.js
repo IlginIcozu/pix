@@ -204,7 +204,7 @@ function setup() {
 
   akChooser = random([1, 2])
 
-  dirChooser = random([1.0, 3.0, 3.0, 4.0])
+  dirChooser = random([1.0, 3.0, 3.0, 4.0,1.0,3.0,3.0])
 
 
   let dX = random([1., -1., 0.0, 0.0])
