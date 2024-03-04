@@ -56,9 +56,12 @@ let probb
 let borderBox
 let move
 let al
+let m
+let sMult = 1
 
 function preload() {
   seed1 = 99999999 * random()
+  // seed1 = 22930734.006408557
 
   sh = loadShader("pix.vert", "pix.frag");
 }
@@ -135,7 +138,9 @@ function setup() {
 
   minDim = min(width, height)
 
-  sChooser = random([1.0, 2.0, 3.0, 1.0])
+  sChooser = random([1.0, 2.0, 3.0, 1.0, 4.0])
+
+
 
   if (sChooser == 1.0) {
     s = minDim / 10
@@ -143,7 +148,11 @@ function setup() {
     s = minDim / 50
   } else if (sChooser == 3.0) {
     s = minDim / 20
+  } else if (sChooser == 4.0) {
+    s = minDim / 150
   }
+
+
 
 
 
@@ -152,9 +161,11 @@ function setup() {
   // noiseSeed(seed1)
   // randomSeed(seed1)
 
+  let strokeS = random([1, 1, s / 2])
+
   for (let x = 0; x <= width; x += s) {
     for (let y = 0; y <= height; y += s) {
-      f.strokeWeight(1)
+      f.strokeWeight(strokeS)
       // f.stroke(20,80,90)
       // f.point(x,y)
 
@@ -184,15 +195,25 @@ function setup() {
       f.rectMode(CENTER)
       f.rect(x, y, s)
 
+
+
     }
   }
 
 
+
+
   f.pop()
 
+  noiseSeed(seed1)
+  randomSeed(seed1)
+
+ 
 
 
   mapChooser = random([0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 0.0, 0.0])
+
+  mapChooser = 0.0
 
   ellipseChooser = random([0.0, 0.0, 1.0, 0.0, 0.0])
 
@@ -202,9 +223,13 @@ function setup() {
 
   probb = random([0, 1])
 
-  akChooser = random([1, 2])
+  akChooser = random([1, 2, 1])
 
-  dirChooser = random([1.0, 3.0, 3.0, 4.0,1.0,3.0,3.0])
+  dirChooser = random([1.0, 3.0, 3.0, 4.0, 1.0, 3.0, 3.0, 1.0, 1.0, 1.0])
+
+  if (sChooser == 4.0) akChooser = 1, sMult = 1.5,dirChooser = 3.0
+
+
 
 
   let dX = random([1., -1., 0.0, 0.0])
@@ -218,8 +243,8 @@ function setup() {
 
   let proD = random([.1, .5])
 
-  let text1 = random([0.0, 0.0, 0.0, 1.0])
-  let text2 = random([0.0, 0.0, 0.0, 1.0, 0.0, 0.0])
+  let text1 = random([0.0, 0.0, 0.0, 1.0, 0.0])
+  let text2 = 0.0 //random([0.0, 0.0, 0.0, 1.0, 0.0, 0.0])
 
 
   shader(sh)
@@ -292,6 +317,8 @@ function setup() {
   move = 0
   al = 255
 
+  m = random([1, 1, 10])
+
 }
 
 function draw() {
@@ -300,7 +327,7 @@ function draw() {
   let y = (random(h / s) ^ (frameCount / s)) * s
 
 
-  let m = 1 ///10
+  // m  = 10
 
   // pg.fill(random([0, 255, 127]) / m, random([0, 255, 127]) / m, random([0, 255, 127]) / m)
   // pg.rect(x, y, s * 2, s * 2)
@@ -426,7 +453,11 @@ function draw() {
       s = random([minDim / 50, minDim / 20, minDim / 50, minDim / 20])
     } else if (sChooser == 3.0) {
       s = random([minDim / 10, minDim / 5, minDim / 10, minDim / 5])
+    } else if (sChooser == 4.0) {
+      s = random([minDim / 150, minDim / 125, minDim / 150, minDim / 150, minDim / 125])
     }
+
+
 
     for (let y = 0; y < h; y += s) {
       for (let x = 0; x < w; x += s) {
@@ -494,7 +525,7 @@ function draw() {
     }
 
     if (akChooser == 1.0) {
-      sh.setUniform('ak', random([1., 1., 2.0, 1., 1., 2.0, 3., 1., 1., 1.]))
+      sh.setUniform('ak', random([1., 1., 2.0, 1., 1., 2.0, 3., 1., 1., 1.]) / sMult)
     } else if (akChooser == 2.0) {
       sh.setUniform('ak', 3.0)
     } else if (akChooser == 3.0) {
@@ -568,3 +599,6 @@ function keyPressed() {
     saveCanvas("strained", "png")
   }
 }
+
+
+
