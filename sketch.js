@@ -37,7 +37,7 @@ let i, f, g, k
 let frameMod
 let blurShader
 
-let seed1 = 99999999 * mathRand()
+let seed1 
 let borderStr
 let uOctave
 let border
@@ -57,6 +57,7 @@ let borderBox
 
 
 function preload() {
+  seed1 = 99999999 * random()
   sh = loadShader("pix.vert", "pix.frag");
 }
 
