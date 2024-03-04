@@ -14,12 +14,26 @@ uniform float dirY;
 uniform float satOn;
 uniform float proD;
 uniform float u_time;
+uniform float u_text1;
+uniform float u_text2;
+uniform float u_scale;
 
 float random (vec2 st) {
     return fract(sin(dot(st.xy,
                          vec2(12.9898,78.233)))*
         43758.5453123);
 }
+
+ float noise (in vec2 st) {
+     vec2 i = floor(st);
+     vec2 fu = fract(st);
+     float a = random(i);
+     float b = random(i + vec2(1.0, 0.0));
+     float c = random(i + vec2(0.0, 1.0));
+     float d = random(i + vec2(1.0, 1.0));
+     vec2 u = fu * fu * (3.0 - 2.0 * fu);
+     return mix(a, b, u.x) +(c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+ }
 
 
 vec3 rgb2hsv(vec3 c) {
@@ -42,8 +56,15 @@ void main() {
 
   vec2 offset;
   vec2 pgCol;
-  offset = vec2(texture2D(pg2, uv).r * 10. * ak ) * vec2(1./resolution.x, 1./resolution.y);  //* ceil(random(uv/1.0));
+
+  if(u_text1 == 0.0){
+   offset = vec2(texture2D(pg2, uv).r * 10. * ak ) * vec2(1./resolution.x, 1./resolution.y);  //* ceil(random(uv/1.0));
+  }else{
+   offset = vec2(texture2D(pg2, uv).r * 10. * ak ) * vec2(1./resolution.x, 1./resolution.y) * noise(uv*u_scale); 
+  }
   
+  //
+
   pgCol = vec2(texture2D(pg, uv));
 
   if(satOn == 1.0){/////sadece düz
@@ -56,12 +77,19 @@ void main() {
       else if(pgCol.x < 1.) offset.x *= dirX;
     if(pgCol.y < .5) offset.y *= -1.;
       else if(pgCol.y < 1.) offset.y *= dirY;
-  }else{////////bu da hepsi
+  }else if(satOn == 3.0){////////bu da hepsi
     if(pgCol.x < .1) offset.x *= -1.;
       else offset.x *= dirX;
     if(pgCol.y < .1) offset.y *= -1.;
       else  offset.y *= dirY;
-  }
+  }else if(satOn == 4.0){
+   float ss = smoothstep(sin(u_time) - 0.006,cos(u_time),uv.y) - smoothstep(cos(u_time),sin(u_time)+ 0.006,uv.y);
+   float ss2 = smoothstep(cos(u_time) - 0.006,sin(u_time),uv.x) - smoothstep(sin(u_time),cos(u_time)+ 0.006,uv.x);
+   if(pgCol.x < .1) offset.x *=  -1. * ss2;
+    else if(pgCol.x < 1.) offset.x *= 1. * ss2;
+    if(pgCol.y < .1) offset.y *= -1. * cos(u_time);
+    else if(pgCol.y < 1.) offset.y *= 1. * cos(u_time);
+    }
 
 
   
@@ -70,12 +98,21 @@ void main() {
 //  if(pgCol.y < proD) offset.y *=  -1.* cos(u_time);
 //   else  offset.y *= 1. * cos(u_time);
 
+
+
   vec3 c = texture2D(img, uv + offset).rgb ;
   
 
-
+if(u_text2 == 0.0){
   c -= texture2D(img, uv + ceil(random(uv/1.0)) - offset).rgb;
   c += texture2D(img, uv + ceil(random(uv/1.0)) + offset).rgb;
+}else{
+  c -= texture2D(img, uv + (noise(uv*20.0)) - offset).rgb;
+  c += texture2D(img, uv + (noise(uv*20.0)) + offset).rgb;
+}
+
+  
+
 
 
 
