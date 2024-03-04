@@ -37,7 +37,7 @@ let i, f, g, k
 let frameMod
 let blurShader
 
-let seed1 
+let seed1
 let borderStr
 let uOctave
 let border
@@ -54,10 +54,12 @@ let dirChooser
 let whEdgeX
 let probb
 let borderBox
-
+let move
+let al
 
 function preload() {
   seed1 = 99999999 * random()
+
   sh = loadShader("pix.vert", "pix.frag");
 }
 
@@ -152,8 +154,8 @@ function setup() {
 
   for (let x = 0; x <= width; x += s) {
     for (let y = 0; y <= height; y += s) {
-      f.strokeWeight(2)
-      // f.stroke(0)
+      f.strokeWeight(1)
+      // f.stroke(20,80,90)
       // f.point(x,y)
 
       if (random(1) < 0.9) {
@@ -171,7 +173,7 @@ function setup() {
   for (let x = 0; x <= width; x += s / 2) {
     for (let y = 0; y <= height; y += s / 2) {
       f.strokeWeight(1)
-      // f.stroke(0)
+      // f.stroke(0,0,random(90,100))
       // f.point(x,y)
 
       if (random(1) < 0.9) {
@@ -202,7 +204,7 @@ function setup() {
 
   akChooser = random([1, 2])
 
-  dirChooser = random([1.0, 3.0, 3.0])
+  dirChooser = random([1.0, 3.0, 3.0, 4.0])
 
 
   let dX = random([1., -1., 0.0, 0.0])
@@ -216,6 +218,9 @@ function setup() {
 
   let proD = random([.1, .5])
 
+  let text1 = random([0.0, 0.0, 0.0, 1.0])
+  let text2 = random([0.0, 0.0, 0.0, 1.0, 0.0, 0.0])
+
 
   shader(sh)
 
@@ -224,6 +229,11 @@ function setup() {
   sh.setUniform('pg2', pg2)
   sh.setUniform('img', f)
   sh.setUniform('proD', proD)
+
+  sh.setUniform('u_text1', text1)
+  sh.setUniform('u_text2', text2)
+  sh.setUniform('u_scale', random([2, 5, 10, 15, 20, 30, 20, 20, 20, 2, 2, 2, 2]))
+
 
 
 
@@ -261,11 +271,14 @@ function setup() {
   blockColor2 = 255
   blockColor3 = 255
 
+
+
   blockW = width / 2
   blockH = height / 2
   blockAni = random([0.0, 1.0])
 
   border = random([0.0, 0.0, 1.0, 1.0, 1.0])
+
 
   if (border == 1.0) borderStr = "border"
   yatayChooser = random([0.0, 1.0, 2.0, 3.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
@@ -276,6 +289,9 @@ function setup() {
 
   // noCursor()
 
+  move = 0
+  al = 255
+
 }
 
 function draw() {
@@ -284,13 +300,16 @@ function draw() {
   let y = (random(h / s) ^ (frameCount / s)) * s
 
 
-  let m = 1
+  let m = 1 ///10
 
   // pg.fill(random([0, 255, 127]) / m, random([0, 255, 127]) / m, random([0, 255, 127]) / m)
   // pg.rect(x, y, s * 2, s * 2)
 
+
   pg2.fill(random([0, 255, 127]) / m, random([0, 255, 127]) / m, random([0, 255, 127]) / m)
-  pg2.rect(x, y, s * 2, s * 2)
+  pg2.rect(x, y, s, s)
+
+
 
   if (border == 1.0) {
     pg2.push()
@@ -348,7 +367,7 @@ function draw() {
         pg2.rect(width / 2, height / 2, min(width, height) / 2, height)
       }
       pg2.pop()
-    }else if (yatayChooser == 4.0) {
+    } else if (yatayChooser == 4.0) {
       pg2.push()
       pg2.ellipse(width / 2, height / 2, min(width, height) / 1.25)
       pg2.pop()
@@ -392,11 +411,14 @@ function draw() {
     pg2.pop()
   }
 
+  // pg2.fill(move, al)
+  // pg2.rect(0, 0, w / 2, h)
 
 
   img.image(c, w / 2, h / 2)
 
   if (frameCount % frameMod == 0) {
+
     minDim = min(width, height)
     if (sChooser == 1.0) {
       s = random([minDim / 10, minDim / 5, minDim / 20, minDim / 10, minDim / 50])
@@ -405,7 +427,6 @@ function draw() {
     } else if (sChooser == 3.0) {
       s = random([minDim / 10, minDim / 5, minDim / 10, minDim / 5])
     }
-
 
     for (let y = 0; y < h; y += s) {
       for (let x = 0; x < w; x += s) {
@@ -441,10 +462,33 @@ function draw() {
           }
         }
 
-        pg2.fill(random([0, 255, 127]), random([0, 255, 127]), random([0, 255, 127]))
+        let r = random([0, 255, 127])
+        let g = random([0, 255, 127])
+        let b = random([0, 255, 127])
 
+        pg2.fill(r, g, b)
 
+        // al = random([255, 255, 255, 255, 0])
+
+        // let bol = x > w / 2
+
+        // if(al == 0) bol = true
+
+        // if (bol) 
         pg2.rect(x, y, s, s)
+
+
+
+
+        // if (frameCount % 50 == 0) {
+        //   pg2.fill(0, 0, 0)
+        //   if(random(1) < 0.8)pg2.rect(0, 0, w / 2, h)
+
+        // }else{
+
+        // }
+
+
 
       }
     }
@@ -495,6 +539,10 @@ function draw() {
   sh.setUniform('pg', pg2)
   sh.setUniform('img', img)
   sh.setUniform('pg2', pg2)
+
+  // sh.setUniform('pg', img)
+  // sh.setUniform('img', img)
+  // sh.setUniform('pg2', pg2)
 
   pg.noStroke()
 
